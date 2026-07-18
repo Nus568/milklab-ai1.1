@@ -14,3 +14,9 @@ faiss-cpu>=1.8.0
 
 # Dev tools
 pytest>=8.0.0
+
+
+gspread
+oauth2client
+python-dotenv
+requests
