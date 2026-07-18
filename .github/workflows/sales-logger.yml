@@ -32,7 +32,12 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Skip when Google Sheets secret is not configured
+        if: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS == '' }}
+        run: echo "Skipping sales_logger because GOOGLE_SHEETS_CREDENTIALS is not configured."
+
       - name: Run sales_logger
+        if: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS != '' }}
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
