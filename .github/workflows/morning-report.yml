@@ -17,9 +17,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: pip
 
       - name: Install Dependencies
-        run: pip install gspread oauth2client requests
+        # เปลี่ยนมาใช้ requirements.txt เพื่อให้ลงครบทุกตัว
+        run: pip install -r requirements.txt
 
       - name: Decode Google Credentials
         # แปลงไฟล์ความลับที่เก็บไว้ใน GitHub คืนกลับมาเป็นไฟล์ .json
@@ -30,5 +32,5 @@ jobs:
           GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        # รันสคริปต์เพื่อแจ้งเตือน (ทดสอบการทำงาน)
-        run: python scripts/sales_logger.py --menu "Daily Check" --qty 1 --price 0
+        # แก้ Path เป็น python sales_logger.py (ลบคำว่า scripts/ ออก)
+        run: python sales_logger.py --menu "Daily Check" --qty 1 --price 0
