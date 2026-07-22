@@ -3,6 +3,7 @@ import os
 import telebot
 from dotenv import load_dotenv
 from agent_harness import process_user_message
+from datetime import datetime
 
 # โหลดค่าจากไฟล์ .env
 load_dotenv()
@@ -39,3 +40,24 @@ def handle_all_messages(message):
 if __name__ == "__main__":
     print("🚀 เริ่มรัน MilkLab Agent Bot ...")
     bot.infinity_polling()
+
+
+def log_trace(event_type: str, message: str):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with open("../agent_trace.log", "a", encoding="utf-8") as f:
+        f.write(f"{timestamp} | {event_type} | {message}\n")
+        f.flush()
+
+
+# ตัวอย่างในฟังก์ชันรับข้อความของแอป
+def handle_chat_message(user_message):
+    # บันทึกข้อมูลฝั่ง User
+    log_trace("user_input", user_message)
+
+    # ส่งข้อความไปหาโมเดล AI
+    response = chat_session.send_message(user_message)
+
+    # บันทึกข้อมูลฝั่ง LLM Response
+    log_trace("llm_response", response.text)
+
+    return response.text
