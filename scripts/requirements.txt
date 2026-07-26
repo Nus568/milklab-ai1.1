@@ -21,14 +21,10 @@ oauth2client
 python-dotenv
 requests
 
+
+
+
 streamlit
-sentence-transformers
 faiss-cpu
 google-generativeai
 numpy
-
-
-streamlit
-faiss-cpu
-google-generativeai
-sentence-transformers
