@@ -40,7 +40,7 @@ def build_knowledge_base():
     embeddings = []
     for chunk in chunks:
         result = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-2",
             content=chunk,
             task_type="retrieval_document"
         )
@@ -84,7 +84,7 @@ else:
                 try:
                     # แปลงคำถามผู้ใช้เป็นเวกเตอร์
                     query_embedding = genai.embed_content(
-                        model="models/text-embedding-004",
+                        model="models/gemini-embedding-2",
                         content=user_query,
                         task_type="retrieval_query"
                     )['embedding']
