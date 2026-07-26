@@ -1,63 +1,87 @@
-# app.py
+import streamlit as st
+from sentence_transformers import SentenceTransformer
+import faiss
+import google.generativeai as genai
 import os
-import telebot
-from dotenv import load_dotenv
-from agent_harness import process_user_message
-from datetime import datetime
 
-# โหลดค่าจากไฟล์ .env
-load_dotenv()
-
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-ALLOWED_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-
-bot = telebot.TeleBot(BOT_TOKEN)
+# 1. โหลดและแบ่งข้อความจาก menu_kb.md เป็น Chunk
 
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    bot.reply_to(message, "👋 สวัสดีครับ! MilkLab Agent พร้อมให้บริการ\nคุณสามารถสั่งให้ผม:\n- บันทึกยอดขาย (เช่น 'ขายกาแฟ 2 แก้ว แก้วละ 50')\n- ดูสรุปยอดขายวันนี้\n- เช็กราคาสินค้า")
+@st.cache_resource
+def load_knowledge_base():
+    if os.path.exists("menu_kb.md"):
+        with open("menu_kb.md", "r", encoding="utf-8") as f:
+            text = f.read()
+        # ตัดแบ่งง่ายๆ ด้วยการแยกบรรทัดหรือย่อหน้า (Chunking)
+        chunks = [chunk.strip()
+                  for chunk in text.split("\n\n") if chunk.strip()]
+        return chunks
+    return ["ยังไม่มีข้อมูล Knowledge Base"]
 
 
-@bot.message_handler(func=lambda message: True)
-def handle_all_messages(message):
-    # Guardrail 5: Authentication (จำกัดสิทธิ์เฉพาะคุณเท่านั้นที่ใช้บอทได้)
-    if str(message.chat.id) != str(ALLOWED_CHAT_ID):
-        bot.reply_to(message, "⛔ ขออภัย คุณไม่ได้รับสิทธิ์ให้ใช้งานบอทนี้ครับ")
-        return
+chunks = load_knowledge_base()
 
-    # แสดงสถานะ "กำลังพิมพ์..." ให้ดูเป็นธรรมชาติ
-    bot.send_chat_action(message.chat.id, 'typing')
+# 2 & 3. สร้าง Embedding และ FAISS Index
+
+
+@st.cache_resource
+def setup_faiss_index(doc_chunks):
+    model = SentenceTransformer(
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    embeddings = model.encode(doc_chunks, convert_to_numpy=True)
+    dimension = embeddings.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    index.add(embeddings)
+    return model, index
+
+
+embed_model, faiss_index = setup_faiss_index(chunks)
+
+# ตั้งค่า Gemini API
+api_key = os.getenv("GEMINI_API_KEY")
+if api_key:
+    genai.configure(api_key=api_key)
+
+# 4. สร้าง Chat UI ด้วย Streamlit
+st.title("🥛 MilkLab RAG Chatbot")
+st.write("สอบถามข้อมูลเมนู ราคา หรือรายละเอียดร้าน MilkLab ได้เลยครับ!")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if prompt := st.chat_input("พิมพ์คำถามของคุณที่นี่..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # 5. Retrieve ข้อมูลที่เกี่ยวข้องที่สุด (Top-k = 2 หรือ 3)
+    k = 2
+    question_vector = embed_model.encode([prompt], convert_to_numpy=True)
+    distances, indices = faiss_index.search(question_vector, k)
+
+    retrieved_contexts = [chunks[i] for i in indices[0] if i < len(chunks)]
+    context_text = "\n".join(retrieved_contexts)
+
+    # ส่ง Prompt เข้า Gemini พร้อม Context ที่ดึงมา
+    system_prompt = f"""
+    คุณคือ AI ผู้ช่วยของร้าน MilkLab ตอบคำถามโดยอ้างอิงจากข้อมูลบริบท (Context) ด้านล่างนี้เท่านั้น 
+    หากไม่ทราบคำตอบให้แจ้งว่าไม่ทราบ
+    
+    Context:
+    {context_text}
+    """
 
     try:
-        # ส่งข้อความเข้า Agent Harness
-        reply_text = process_user_message(message.text)
-        bot.reply_to(message, reply_text)
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content([system_prompt, prompt])
+        answer = response.text
     except Exception as e:
-        bot.reply_to(message, f"❌ ไม่สามารถดำเนินการได้: {e}")
+        answer = f"เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini API: {e}"
 
-
-if __name__ == "__main__":
-    print("🚀 เริ่มรัน MilkLab Agent Bot ...")
-    bot.infinity_polling()
-
-
-def log_trace(event_type: str, message: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    with open("../agent_trace.log", "a", encoding="utf-8") as f:
-        f.write(f"{timestamp} | {event_type} | {message}\n")
-        f.flush()
-
-
-# ตัวอย่างในฟังก์ชันรับข้อความของแอป
-def handle_chat_message(user_message):
-    # บันทึกข้อมูลฝั่ง User
-    log_trace("user_input", user_message)
-
-    # ส่งข้อความไปหาโมเดล AI
-    response = chat_session.send_message(user_message)
-
-    # บันทึกข้อมูลฝั่ง LLM Response
-    log_trace("llm_response", response.text)
-
-    return response.text
+    with st.chat_message("assistant"):
+        st.markdown(answer)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
