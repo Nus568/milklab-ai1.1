@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaHardware - ศูนย์รวมอุปกรณ์ฮาร์ดแวร์และเครื่องมือช่าง</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl font-bold tracking-wider text-orange-500">⚙️ MegaHardware</span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#" class="hover:text-orange-400 transition">หน้าแรก</a>
+                <a href="#products" class="hover:text-orange-400 transition">สินค้าทั้งหมด</a>
+                <a href="#chat" class="hover:text-orange-400 transition">ผู้ช่วยช่าง AI</a>
+                <a href="#contact" class="hover:text-orange-400 transition">ติดต่อเรา</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">เครื่องมือช่างและฮาร์ดแวร์ ครบจบในที่เดียว</h1>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto mb-8">คัดสรรอุปกรณ์คุณภาพสูงสำหรับงานช่าง งานซ่อมแซม และโครงการก่อสร้าง พร้อมผู้ช่วย AI ให้คำปรึกษาตลอด 24 ชม.</p>
+            <a href="#products" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition">เลือกซื้อสินค้า</a>
+        </div>
+    </section>
+
+    <!-- Product Grid Section -->
+    <section id="products" class="container mx-auto px-6 py-16">
+        <h2 class="text-3xl font-bold text-center mb-12">สินค้าแนะนำ</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Product Card 1 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                <div class="h-48 bg-gray-200 flex items-center justify-center text-4xl">🔨</div>
+                <div class="p-6">
+                    <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">เครื่องมือไฟฟ้า</span>
+                    <h3 class="text-xl font-bold mt-1 mb-2">สว่านกระแทกไร้สาย 20V</h3>
+                    <p class="text-gray-600 text-sm mb-4">แรงบิดสูง เจาะปูน ไม้ และเหล็กได้อย่างมีประสิทธิภาพ พร้อมแบตเตอรี่คู่</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-slate-900">฿2,990</span>
+                        <button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-500 transition">หยิบใส่ตะกร้า</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Card 2 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                <div class="h-48 bg-gray-200 flex items-center justify-center text-4xl">🧰</div>
+                <div class="p-6">
+                    <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">ชุดเครื่องมือ</span>
+                    <h3 class="text-xl font-bold mt-1 mb-2">ชุดเครื่องมือช่าง 120 ชิ้น</h3>
+                    <p class="text-gray-600 text-sm mb-4">ครบเครื่องเรื่องซ่อม ประแจ ไขควง คีม และลูกบล็อก เหล็กกล้า Vanadium เกรดพรีเมียม</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-slate-900">฿1,850</span>
+                        <button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-500 transition">หยิบใส่ตะกร้า</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Card 3 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                <div class="h-48 bg-gray-200 flex items-center justify-center text-4xl">⚡</div>
+                <div class="p-6">
+                    <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">งานเชื่อม</span>
+                    <h3 class="text-xl font-bold mt-1 mb-2">ตู้เชื่อมอินเวอร์เตอร์ MMA-400</h3>
+                    <p class="text-gray-600 text-sm mb-4">ประหยัดไฟ เชื่อมนิ่ม แนวเชื่อมสวยงาม น้ำหนักเบา พกพาสะดวก</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-slate-900">฿3,490</span>
+                        <button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-500 transition">หยิบใส่ตะกร้า</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Chat Section -->
+    <section id="chat" class="bg-slate-100 py-16 border-t border-gray-200">
+        <div class="container mx-auto px-6 max-w-3xl">
+            <h2 class="text-3xl font-bold text-center mb-2">💬 ผู้ช่วยช่างอัจฉริยะ (AI Expert)</h2>
+            <p class="text-center text-gray-600 mb-8">ปรึกษาปัญหาเรื่องเครื่องมือ เลือกสเปกอุปกรณ์ หรือสอบถามวิธีใช้งานกับ AI ได้ทันที</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div id="chat-box" class="h-80 overflow-y-auto mb-4 space-y-4 border-b border-gray-100 pb-4 pr-2">
+                    <div class="flex items-start">
+                        <div class="bg-orange-500 text-white rounded-lg p-3 text-sm max-w-md">
+                            สวัสดีครับ! ผมคือผู้ช่วยช่างจาก MegaHardware มีอุปกรณ์ฮาร์ดแวร์หรือเครื่องมือชิ้นไหนให้ผมช่วยแนะนำไหมครับ?
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="user-input" placeholder="พิมพ์คำถามของคุณที่นี่ เช่น หาซื้อสว่านราคาไม่เกิน 3000..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-orange-500">
+                    <button onclick="sendMessage()" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition">ส่ง</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-slate-900 text-white py-8 text-center text-sm">
+        <p>&copy; 2026 MegaHardware Store. สงวนลิขสิทธิ์ทุกประการ</p>
+    </footer>
+
+    <!-- Chat Script -->
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Append User Message
+            chatBox.innerHTML += `<div class="flex justify-end"><div class="bg-slate-800 text-white rounded-lg p-3 text-sm max-w-md">${text}</div></div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+                
+                // Append AI Response
+                chatBox.innerHTML += `<div class="flex items-start"><div class="bg-orange-500 text-white rounded-lg p-3 text-sm max-w-md">${data.response}</div></div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                chatBox.innerHTML += `<div class="flex items-start"><div class="bg-red-500 text-white rounded-lg p-3 text-sm max-w-md">⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อระบบ AI</div></div>`;
+            }
+        }
+    </script>
+</body>
+</html>

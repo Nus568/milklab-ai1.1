@@ -28,3 +28,7 @@ streamlit
 faiss-cpu
 google-generativeai
 numpy
+
+Flask==3.0.2
+python-dotenv==1.0.1
+google-genai==1.0.0
