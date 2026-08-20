@@ -1,41 +1,36 @@
-# app.py
 import os
-import telebot
+from flask import Flask, render_template, request, jsonify
+from google import genai
 from dotenv import load_dotenv
-from agent_harness import process_user_message
 
-# โหลดค่าจากไฟล์ .env
 load_dotenv()
 
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-ALLOWED_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+app = Flask(__name__)
 
-bot = telebot.TeleBot(BOT_TOKEN)
+# ตั้งค่า Gemini Client
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    bot.reply_to(message, "👋 สวัสดีครับ! MilkLab Agent พร้อมให้บริการ\nคุณสามารถสั่งให้ผม:\n- บันทึกยอดขาย (เช่น 'ขายกาแฟ 2 แก้ว แก้วละ 50')\n- ดูสรุปยอดขายวันนี้\n- เช็กราคาสินค้า")
-
-
-@bot.message_handler(func=lambda message: True)
-def handle_all_messages(message):
-    # Guardrail 5: Authentication (จำกัดสิทธิ์เฉพาะคุณเท่านั้นที่ใช้บอทได้)
-    if str(message.chat.id) != str(ALLOWED_CHAT_ID):
-        bot.reply_to(message, "⛔ ขออภัย คุณไม่ได้รับสิทธิ์ให้ใช้งานบอทนี้ครับ")
-        return
-
-    # แสดงสถานะ "กำลังพิมพ์..." ให้ดูเป็นธรรมชาติ
-    bot.send_chat_action(message.chat.id, 'typing')
-
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    user_message = data.get('message', '')
+    
     try:
-        # ส่งข้อความเข้า Agent Harness
-        reply_text = process_user_message(message.text)
-        bot.reply_to(message, reply_text)
+        # กำหนด System Instructions ให้ AI ทำหน้าที่เป็นพนักงานขายฮาร์ดแวร์ผู้เชี่ยวชาญ
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=user_message,
+            config={
+                'system_instruction': 'คุณคือผู้ช่วยอัจฉริยะของร้านฮาร์ดแวร์ "MegaHardware" หน้าที่ของคุณคือแนะนำสินค้าและตอบคำถามลูกค้าให้กระชับ ตรงประเด็น สั้นเข้าใจง่าย (ไม่เกิน 3 บรรทัดหรือใช้ bullet points สั้นๆ) น้ำเสียงสุภาพเป็นกันเอง'
+            }
+        )
+        return jsonify({'response': response.text})
     except Exception as e:
-        bot.reply_to(message, f"❌ ไม่สามารถดำเนินการได้: {e}")
+        return jsonify({'response': f'ขออภัย ระบบ AI ขัดข้องชั่วคราว: {str(e)}'}), 500
 
-
-if __name__ == "__main__":
-    print("🚀 เริ่มรัน MilkLab Agent Bot ...")
-    bot.infinity_polling()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
